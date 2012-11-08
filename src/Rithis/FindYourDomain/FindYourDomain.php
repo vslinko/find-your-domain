@@ -2,13 +2,9 @@
 
 namespace Rithis\FindYourDomain;
 
-use React\Dns\Resolver\Factory as DnsResolverFactory,
-    React\EventLoop\Factory as EventLoopFactory,
-    React\Socket\Connection as SocketConnection,
-    React\Whois\Client as WhoisClient,
+use React\EventLoop\LoopInterface,
+    PronounceableWord_Generator,
     Wisdom\Wisdom;
-
-use PronounceableWord_DependencyInjectionContainer;
 
 class FindYourDomain
 {
@@ -18,20 +14,11 @@ class FindYourDomain
     private $generator;
     private $wisdom;
 
-    public function __construct()
+    public function __construct(LoopInterface $loop, Wisdom $wisdom, PronounceableWord_Generator $generator)
     {
-        $this->loop = $loop = EventLoopFactory::create();
-        $factory = new DnsResolverFactory();
-        $resolver = $factory->create('8.8.8.8', $loop);
-
-        $this->wisdom = new Wisdom(new WhoisClient($resolver, function ($ip) use ($loop) {
-            $fd = stream_socket_client("tcp://$ip:43");
-
-            return new SocketConnection($fd, $loop);
-        }));
-
-        $container = new PronounceableWord_DependencyInjectionContainer();
-        $this->generator = $container->getGenerator();
+        $this->loop = $loop;
+        $this->wisdom = $wisdom;
+        $this->generator = $generator;
     }
 
     public function find($callback, $length = 5, $tlds = array('com', 'net'))

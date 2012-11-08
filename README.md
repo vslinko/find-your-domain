@@ -28,7 +28,7 @@ $callback = function ($domains) use ($output) {
 $length = 5;
 $tlds = array('com', 'net', 'io');
 
-$this->finder->find($callback, $length, $tlds);
+Rithis\FindYourDomain\Factory::factory()->find($callback, $length, $tlds);
 // Example output: absof.com absof.net absof.io
 ```
 
