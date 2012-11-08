@@ -2,11 +2,12 @@
 
 namespace Rithis\FindYourDomain;
 
-use React\EventLoop\Factory as EventLoopFactory;
-use React\Dns\Resolver\Factory as DnsResolverFactory;
-use React\Socket\Connection as SocketConnection;
-use Wisdom\Wisdom;
-use React\Whois\Client as WhoisClient;
+use React\Dns\Resolver\Factory as DnsResolverFactory,
+    React\EventLoop\Factory as EventLoopFactory,
+    React\Socket\Connection as SocketConnection,
+    React\Whois\Client as WhoisClient,
+    Wisdom\Wisdom;
+
 use PronounceableWord_DependencyInjectionContainer;
 
 class FindYourDomain
