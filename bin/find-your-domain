@@ -1,0 +1,13 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use Symfony\Component\Console\Application;
+use Rithis\FindYourDomain\FindYourDomain;
+use Rithis\FindYourDomain\Command;
+
+$app = new Application('find-your-domain', FindYourDomain::VERSION);
+$app->add(new Command\OneCommand());
+$app->add(new Command\ManyCommand());
+$app->run();

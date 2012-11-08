@@ -1,0 +1,32 @@
+{
+    "name": "rithis/find-your-domain",
+    "description": "Find best domains in your TLDs",
+    "keywords": ["domain", "random", "generator", "whois", "wisdom"],
+    "homepage": "https://github.com/rithis/find-your-domain",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Vyacheslav Slinko",
+            "email": "vyacheslav.slinko@rithis.com",
+            "role": "Founder"
+        }
+    ],
+    "support": {
+        "email": "support@rithis.com",
+        "issues": "https://github.com/rithis/find-your-domain/issues",
+        "wiki": "https://github.com/rithis/find-your-domain/wiki",
+        "source": "https://github.com/rithis/find-your-domain"
+    },
+    "require": {
+        "umpirsky/wisdom": "@dev",
+        "gnugat/PronounceableWord": "@stable",
+        "symfony/console": "@stable"
+    },
+    "autoload": {
+        "psr-0": {
+            "Rithis": "src"
+        }
+    },
+    "minimum-stability": "dev",
+    "bin": ["bin/find-your-domain"]
+}
