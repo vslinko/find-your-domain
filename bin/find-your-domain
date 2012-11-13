@@ -3,11 +3,10 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use Symfony\Component\Console\Application;
-use Rithis\FindYourDomain\FindYourDomain;
-use Rithis\FindYourDomain\Command;
+use Symfony\Component\Console\Application,
+    Rithis\FindYourDomain\Command;
 
-$app = new Application('find-your-domain', FindYourDomain::VERSION);
+$app = new Application('find-your-domain', '0.0.1-dev');
 $app->add(new Command\OneCommand());
 $app->add(new Command\ManyCommand());
 $app->run();

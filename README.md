@@ -21,6 +21,14 @@ After that run `composer update rithis/find-your-domain`.
 ### Library
 
 ```php
+<?php
+
+use React\Dns\Resolver\Factory as DnsResolverFactory,
+    React\EventLoop\Factory as EventLoopFactory,
+    React\Socket\Connection as SocketConnection,
+    React\Whois\Client as WhoisClient,
+    Wisdom\Wisdom;
+
 $callback = function ($domains) use ($output) {
     echo implode(' ', $domains), "\n";
 };
@@ -28,9 +36,24 @@ $callback = function ($domains) use ($output) {
 $length = 5;
 $tlds = array('com', 'net', 'io');
 
-Rithis\FindYourDomain\Factory::factory()->find($callback, $length, $tlds);
-// Example output: absof.com absof.net absof.io
+$loop = EventLoopFactory::create();
+$factory = new DnsResolverFactory();
+$resolver = $factory->create($input->getOption('dns-server'), $loop);
+
+$wisdom = new Wisdom(new WhoisClient($resolver, function ($ip) use ($loop) {
+    return new SocketConnection(stream_socket_client("tcp://$ip:43"), $loop);
+}));
+
+$container = new PronounceableWord_DependencyInjectionContainer();
+$generator = $container->getGenerator();
+
+$finder = $this->getFinder($wisdom, $generator, $loop);
+$finder->find($callback, $length, $tlds);
+
+$loop->run();
 ```
+
+Example output: `absof.com absof.net absof.io`
 
 ### Console
 

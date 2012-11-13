@@ -2,8 +2,11 @@
 
 namespace Rithis\FindYourDomain\Command;
 
-use Symfony\Component\Console\Output\OutputInterface,
-    Symfony\Component\Console\Input\InputInterface;
+use React\EventLoop\LoopInterface,
+    PronounceableWord_Generator,
+    Wisdom\Wisdom;
+
+use Rithis\FindYourDomain\StreamFinder;
 
 class ManyCommand extends OneCommand
 {
@@ -14,10 +17,8 @@ class ManyCommand extends OneCommand
         $this->setName('many');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function getFinder(Wisdom $wisdom, PronounceableWord_Generator $generator, LoopInterface $loop)
     {
-        while (true) {
-            $this->doExecute($input, $output);
-        }
+        return new StreamFinder($wisdom, $generator, $loop);
     }
 }

@@ -1,5 +1,5 @@
 {
-    "hash": "490b1ef45d65eed71b204fa357b0fdd2",
+    "hash": "9fb651f459fb65243f5d44a995d2ef28",
     "packages": [
         {
             "name": "evenement/evenement",
@@ -7,18 +7,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/igorw/evenement",
-                "reference": "e3069e43228cba12f3e6e76ad53401232f9bacfb"
+                "reference": "406a0bd40c4d934e020469b923fad6330512ed4c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/igorw/evenement/zipball/e3069e43228cba12f3e6e76ad53401232f9bacfb",
-                "reference": "e3069e43228cba12f3e6e76ad53401232f9bacfb",
+                "url": "https://github.com/igorw/evenement/archive/406a0bd40c4d934e020469b923fad6330512ed4c.zip",
+                "reference": "406a0bd40c4d934e020469b923fad6330512ed4c",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "1351867497",
+            "time": "1351909043",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -211,18 +211,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/reactphp/promise",
-                "reference": "c6c759df113c901eca56d66215d5de3eac6e1312"
+                "reference": "v1.0.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/reactphp/promise/archive/c6c759df113c901eca56d66215d5de3eac6e1312.zip",
-                "reference": "c6c759df113c901eca56d66215d5de3eac6e1312",
+                "url": "https://github.com/reactphp/promise/archive/v1.0.1.zip",
+                "reference": "v1.0.1",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
-            "time": "1352337251",
+            "time": "1352815883",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -430,19 +430,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/umpirsky/wisdom.git",
-                "reference": "1f2aa9e83783591f0af83e3c4898ed0f17285de4"
+                "reference": "19622158140152db610559371475ba97ad136d6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/umpirsky/wisdom/archive/1f2aa9e83783591f0af83e3c4898ed0f17285de4.zip",
-                "reference": "1f2aa9e83783591f0af83e3c4898ed0f17285de4",
+                "url": "https://github.com/umpirsky/wisdom/archive/19622158140152db610559371475ba97ad136d6e.zip",
+                "reference": "19622158140152db610559371475ba97ad136d6e",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
                 "react/whois": "0.1.*"
             },
-            "time": "1352385428",
+            "time": "1352829409",
             "type": "library",
             "installation-source": "source",
             "autoload": {
