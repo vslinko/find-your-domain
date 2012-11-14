@@ -430,19 +430,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/umpirsky/wisdom.git",
-                "reference": "19622158140152db610559371475ba97ad136d6e"
+                "reference": "f16617df82eb21323b812fa9bf941afbd298cc93"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/umpirsky/wisdom/archive/19622158140152db610559371475ba97ad136d6e.zip",
-                "reference": "19622158140152db610559371475ba97ad136d6e",
+                "url": "https://github.com/umpirsky/wisdom/archive/f16617df82eb21323b812fa9bf941afbd298cc93.zip",
+                "reference": "f16617df82eb21323b812fa9bf941afbd298cc93",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
                 "react/whois": "0.1.*"
             },
-            "time": "1352829409",
+            "time": "1352838516",
             "type": "library",
             "installation-source": "source",
             "autoload": {

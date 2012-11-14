@@ -2,59 +2,31 @@
 
 namespace Rithis\FindYourDomain;
 
-use React\EventLoop\LoopInterface,
-    PronounceableWord_Generator,
-    Wisdom\Wisdom;
+use Evenement\EventEmitter;
 
-class StreamFinder extends Finder
+class StreamFinder extends EventEmitter
 {
-    private $loop;
-    private $period;
-    private $queueLimit;
-    private $queue = array();
+    private $finder;
+    private $length;
+    private $tlds;
 
-    public function __construct(Wisdom $wisdom, PronounceableWord_Generator $generator, LoopInterface $loop,
-                                $period = 1, $queueLimit = 10)
+    public function __construct(Finder $finder, $length = 5, $tlds = array('com', 'net'))
     {
-        parent::__construct($wisdom, $generator);
-
-        $this->loop = $loop;
-        $this->period = $period;
-        $this->queueLimit = $queueLimit;
+        $this->finder = $finder;
+        $this->length = $length;
+        $this->tlds = $tlds;
     }
 
-    public function find($callback, $length = 5, $tlds = array('com', 'net'))
+    public function start()
     {
-        parent::find(function () {}, $length, $tlds);
+        $this->findRecursively();
+    }
 
-        $this->loop->addPeriodicTimer($this->period, function () use ($callback) {
-            $result = array_shift($this->queue);
-
-            if ($result) {
-                $callback(array_keys($result));
-            }
+    private function findRecursively()
+    {
+        $this->finder->find($this->length, $this->tlds)->then(function ($domains) {
+            $this->emit('domains-found', array($domains));
+            $this->findRecursively();
         });
-    }
-
-    protected function search()
-    {
-        if (count($this->queue) < $this->queueLimit) {
-            parent::search();
-        } else {
-            $this->loop->addTimer($this->period, function () {
-                parent::search();
-            });
-        }
-    }
-
-    protected function buildCallback($userCallback)
-    {
-        return function ($results) {
-            if (!in_array(false, $results, true)) {
-                $this->queue[] = $results;
-            }
-
-            $this->search();
-        };
     }
 }

@@ -2,11 +2,11 @@
 
 namespace Rithis\FindYourDomain\Command;
 
-use React\EventLoop\LoopInterface,
-    PronounceableWord_Generator,
+use PronounceableWord_Generator,
     Wisdom\Wisdom;
 
-use Rithis\FindYourDomain\StreamFinder;
+use Rithis\FindYourDomain\StreamFinder,
+    Rithis\FindYourDomain\Finder;
 
 class ManyCommand extends OneCommand
 {
@@ -17,8 +17,10 @@ class ManyCommand extends OneCommand
         $this->setName('many');
     }
 
-    protected function getFinder(Wisdom $wisdom, PronounceableWord_Generator $generator, LoopInterface $loop)
+    protected function createFinder(Wisdom $wisdom, PronounceableWord_Generator $generator, $length, $tlds, $callback)
     {
-        return new StreamFinder($wisdom, $generator, $loop);
+        $finder = new StreamFinder(new Finder($wisdom, $generator), $length, $tlds);
+        $finder->on('domains-found', $callback);
+        $finder->start();
     }
 }

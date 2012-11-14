@@ -9,9 +9,8 @@ use Symfony\Component\Console\Output\OutputInterface,
 
 use React\Dns\Resolver\Factory as DnsResolverFactory,
     React\EventLoop\Factory as EventLoopFactory,
-    React\Socket\Connection as SocketConnection,
+    React\Whois\ConnectionFactory as WhoisConnectionFactory,
     React\Whois\Client as WhoisClient,
-    React\EventLoop\LoopInterface,
     Wisdom\Wisdom;
 
 use PronounceableWord_DependencyInjectionContainer,
@@ -31,32 +30,41 @@ class OneCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $loop = EventLoopFactory::create();
-        $factory = new DnsResolverFactory();
-        $resolver = $factory->create($input->getOption('dns-server'), $loop);
+        list($loop, $wisdom, $generator) = $this->prepareDependencies($input);
 
-        $wisdom = new Wisdom(new WhoisClient($resolver, function ($ip) use ($loop) {
-            return new SocketConnection(stream_socket_client("tcp://$ip:43"), $loop);
-        }));
-
-        $container = new PronounceableWord_DependencyInjectionContainer();
-        $generator = $container->getGenerator();
-
-        $finder = $this->getFinder($wisdom, $generator, $loop);
-
-        $callback = function ($domains) use ($output) {
-            $output->writeln(implode(' ', $domains));
-        };
         $length = $input->getOption('length');
         $tlds = $input->getOption('tlds');
+        $callback = $this->buildCallback($output);
 
-        $finder->find($callback, $length, $tlds);
+        $this->createFinder($wisdom, $generator, $length, $tlds, $callback);
 
         $loop->run();
     }
 
-    protected function getFinder(Wisdom $wisdom, PronounceableWord_Generator $generator, LoopInterface $loop)
+    protected function createFinder(Wisdom $wisdom, PronounceableWord_Generator $generator, $length, $tlds, $callback)
     {
-        return new Finder($wisdom, $generator);
+        $finder = new Finder($wisdom, $generator);
+        $finder->find($length, $tlds)->then($callback);
+    }
+
+    protected function prepareDependencies(InputInterface $input)
+    {
+        $loop = EventLoopFactory::create();
+        $factory = new DnsResolverFactory();
+        $resolver = $factory->create($input->getOption('dns-server'), $loop);
+
+        $wisdom = new Wisdom(new WhoisClient($resolver, new WhoisConnectionFactory($loop)));
+
+        $container = new PronounceableWord_DependencyInjectionContainer();
+        $generator = $container->getGenerator();
+
+        return array($loop, $wisdom, $generator);
+    }
+
+    protected function buildCallback(OutputInterface $output)
+    {
+        return function ($domains) use ($output) {
+            $output->writeln(implode(' ', $domains));
+        };
     }
 }

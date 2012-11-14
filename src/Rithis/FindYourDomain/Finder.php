@@ -5,15 +5,13 @@ namespace Rithis\FindYourDomain;
 use PronounceableWord_Generator,
     Wisdom\Wisdom;
 
+use React\Promise\ResolverInterface,
+    React\Promise\Deferred;
+
 class Finder
 {
     private $wisdom;
     private $generator;
-
-    private $userCallback;
-    private $length;
-    private $tlds;
-    private $found;
 
     public function __construct(Wisdom $wisdom, PronounceableWord_Generator $generator)
     {
@@ -21,35 +19,39 @@ class Finder
         $this->generator = $generator;
     }
 
-    public function find($callback, $length = 5, $tlds = array('com', 'net'))
+    public function find($length = 5, $tlds = array('com', 'net'))
     {
-        $this->userCallback = $callback;
-        $this->length = $length;
-        $this->tlds = $tlds;
-        $this->found = false;
+        $deferred = new Deferred();
 
-        $this->search();
+        $progressHandler = function () use ($deferred, $length, $tlds) {
+            $this->search($deferred->resolver(), $length, $tlds);
+        };
+
+        $progressHandler();
+
+        $deferred->then(null, null, $progressHandler);
+
+        return $deferred->promise();
     }
 
-    protected function search()
+    protected function search(ResolverInterface $resolver, $length, $tlds)
     {
-        $name = $this->generator->generateWordOfGivenLength($this->length);
+        $name = $this->generator->generateWordOfGivenLength($length);
 
         $domains = array_map(function ($tld) use ($name) {
             return "$name.$tld";
-        }, $this->tlds);
+        }, $tlds);
 
-        $this->wisdom->checkAll($domains)->then($this->buildCallback($this->userCallback));
+        $this->wisdom->checkAll($domains)->then($this->buildCallback($resolver));
     }
 
-    protected function buildCallback($userCallback)
+    protected function buildCallback(ResolverInterface $resolver)
     {
-        return function ($results) use ($userCallback) {
-            if (!in_array(false, $results, true) && !$this->found) {
-                $this->found = true;
-                $userCallback(array_keys($results));
-            } else if (!$this->found) {
-                $this->search();
+        return function ($result) use ($resolver) {
+            if (!in_array(false, $result, true)) {
+                $resolver->resolve(array_keys($result));
+            } else {
+                $resolver->progress();
             }
         };
     }
