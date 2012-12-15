@@ -8,6 +8,9 @@ use PronounceableWord_Generator,
 use React\Promise\ResolverInterface,
     React\Promise\Deferred;
 
+use React\Promise\When;
+use React\Curry\Util as Curry;
+
 class Finder
 {
     private $wisdom;
@@ -21,20 +24,25 @@ class Finder
 
     public function find($length = 5, $tlds = array('com', 'net'))
     {
-        $deferred = new Deferred();
-
-        $progressHandler = function () use ($deferred, $length, $tlds) {
-            $this->search($deferred->resolver(), $length, $tlds);
+        $searchFactory = function () use ($length, $tlds) {
+            return $this->search($length, $tlds);
         };
 
-        $progressHandler();
+        $errorHandler = function ($errorHandler) use ($searchFactory) {
+            $promises = array();
+            for ($i = 0; $i < 3; $i++) {
+                $promises[] = $searchFactory();
+            }
 
-        $deferred->then(null, null, $progressHandler);
+            return When::any($promises)->then(null, $errorHandler);
+        };
 
-        return $deferred->promise();
+        $process = Curry::bind($errorHandler, array($errorHandler));
+
+        return $process();
     }
 
-    protected function search(ResolverInterface $resolver, $length, $tlds)
+    protected function search($length, $tlds)
     {
         $name = $this->generator->generateWordOfGivenLength($length);
 
@@ -42,17 +50,6 @@ class Finder
             return "$name.$tld";
         }, $tlds);
 
-        $this->wisdom->checkAll($domains)->then($this->buildCallback($resolver));
-    }
-
-    protected function buildCallback(ResolverInterface $resolver)
-    {
-        return function ($result) use ($resolver) {
-            if (!in_array(false, $result, true)) {
-                $resolver->resolve(array_keys($result));
-            } else {
-                $resolver->progress();
-            }
-        };
+        return $this->wisdom->checkAll($domains);
     }
 }
